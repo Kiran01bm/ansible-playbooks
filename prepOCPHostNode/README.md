@@ -1,12 +1,12 @@
 # Playbook to prep Openshift Host nodes
 
 
-## Execution
+## Dry-run, In skip-tags use rpmized for container-based installation and containerized for rpm-based installation
 ```
-ansible-playbook -v -i hosts -e "target=NODE_GROUPNAME" -e "user=ec2-user" -e "rh_password=INSERT_PWD" -e "rh_username=INSERT_USERNAME" playbook.yml -t test
+ansible-playbook -v -i hosts --skip-tags "rpmized" -e "target=NODE_GROUPNAME" -e "user=ec2-user" -e "rh_password=INSERT_PWD" -e "rh_username=INSERT_USERNAME" -e "docker_version=INSERT_DOCKER_VERSION" playbook.yml -t test
 ```
 
-## Testing only
+## Execution, In skip-tags use rpmized for container-based installation and containerized for rpm-based installation
 ```
-ansible-playbook -v -i hosts -e "target=NODE_GROUPNAME" -e "user=ec2-user" -e "rh_password=INSERT_PWD" -e "rh_username=INSERT_USERNAME" playbook.yml
+ansible-playbook -v -i hosts --skip-tags "rpmized" -e "target=NODE_GROUPNAME" -e "user=ec2-user" -e "rh_password=INSERT_PWD" -e "rh_username=INSERT_USERNAME" -e "docker_version=INSERT_DOCKER_VERSION" playbook.yml
 ```

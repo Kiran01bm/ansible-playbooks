@@ -15,6 +15,8 @@
     subscription_poolname: 'TBC'                            # rh pool to subscribe to
     rh_password: 'TBC'
     rh_username: 'TBC'
+    docker_version: 'docker-1.13.1'
+    ocp_rpmrepo: ''
 
   tasks:
 
@@ -33,7 +35,7 @@
         password: "{{ rh_password }}"
         force_register: true
         pool_ids:
-          - xxyyx
+          - xxy
 
 
     - name: "Pull the latest subscription data from RHSM.."
@@ -48,7 +50,7 @@
 
 
     - name: "Enable requrired OSE repositories"
-      command: subscription-manager repos --enable="rhel-7-server-rpms" --enable="rhel-7-server-extras-rpms" --enable="rhel-7-server-ose-3.7-rpms" --enable="rhel-7-fast-datapath-rpms"
+      command: subscription-manager repos --enable="rhel-7-server-rpms" --enable="rhel-7-server-extras-rpms" --enable="rhel-7-server-ose-3.10-rpms" --enable="rhel-7-server-ansible-2.4-rpms"
 
 
     - name: "Install base dependencies"
@@ -79,11 +81,19 @@
         state: present
 
 
-    - name: "Install Openshift utils"
+    - name: "Applicable only for rpm based installation - Pre OCPv3.10 it is atomic-openshift-utils"
       yum: state=present name="{{ item }}"
       with_items:
-          - atomic-openshift-utils
+         - openshift-ansible
+      tags:
+         - rpmized
 
+    - name: "Applicable only for containerized installation"
+      yum: state=present name="{{ item }}"
+      with_items:
+         - atomic
+      tags:
+         - containerized
 
     - name: "Creating new LVM volume group"
       lvg: vg={{ create_vgname }} pvs={{ new_disk }} state=present
@@ -107,7 +117,7 @@
 
     - name: "Install the latest version of Docker"
       yum:
-        name: docker-1.12.6
+        name: "{{ docker_version }}"
         state: present
 
 

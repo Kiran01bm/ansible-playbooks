@@ -17,6 +17,7 @@
     rh_username: 'TBC'
     docker_version: 'docker-1.13.1'
     ocp_rpmrepo: ''
+    block_device_name: '/dev/nvme1n1'
 
   tasks:
 
@@ -94,6 +95,14 @@
          - atomic
       tags:
          - containerized
+
+    - parted:
+      device: {{ block_device_name }}
+      number: 1
+      flags: [ lvm ]
+      state: present
+      part_start: 1MiB
+
 
     - name: "Creating new LVM volume group"
       lvg: vg={{ create_vgname }} pvs={{ new_disk }} state=present

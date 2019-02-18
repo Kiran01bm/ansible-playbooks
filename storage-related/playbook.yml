@@ -13,7 +13,7 @@
     filesystem: "{{ fstype | default('xfs') }}"                 # set to filesystem type to format new logical volume with ( ext4, xfs, etc. )
 
 # ansible-playbook -kv -i hosts -e "user=root" -e "target=SERVER_LIST" -e "pv_name=/dev/sdb1" -e "mnt_point=/app_home"  -e "vg_name=app-vg" -e "lv_name=app-pool" playbook.yml
-# ansible-playbook -kv -i ansibleInventory -e "user=ec2-user" --become --key-file "/home/user/.ssh/id_rsa" -e "target=all" -e "blk_dvc_name=/dev/nvme1n1" -e "pv_name=/dev/nvme1n1p1" -e "mnt_point=/var/lib/docker"  -e "vg_name=docker-vg" -e "lv_name=docker-pool" playbook.yml
+# ansible-playbook -v -i ansibleInventory -e "user=ec2-user" --become --key-file "/home/ec2-user/.ssh/id_rsa" -e "target=all" -e "blk_dvc_name=/dev/nvme1n1" -e "pv_name=/dev/nvme1n1p1" -e "mnt_point=/var/lib/docker"  -e "vg_name=docker-vg" -e "lv_name=docker-pool" playbook.yml
 
   tasks:
 

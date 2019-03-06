@@ -139,7 +139,7 @@
 
 
     - name: "Sys out the storage set-up values"
-      command: cat /etc/sysconfig/docker-storage
+      command: cat /etc/sysconfig/docker-storage-setup
 
 
     - name: "Enable and start Docker service"

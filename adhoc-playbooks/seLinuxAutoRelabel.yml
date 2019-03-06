@@ -5,7 +5,7 @@
   gather_facts: True
 
 
-  # SOP documented here - https://access.redhat.com/solutions/24845
+  # SOP documented here: https://access.redhat.com/solutions/24845
 
   tasks:
 

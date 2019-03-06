@@ -4,11 +4,15 @@
   become: true
   gather_facts: True
 
+
+  # SOP documented here - https://access.redhat.com/solutions/24845
+
   tasks:
 
+    # Assuming the system is in a selinux disabled state, So the regex begins with #SELINUX
     - lineinfile:
         path: /etc/selinux/config
-        regexp: '^SELINUX='
+        regexp: '^#SELINUX='
         line: 'SELINUX=permissive'
 
     - name: "Auto relabel.."
@@ -29,7 +33,7 @@
 	timeout: 300
       when: task_result is changed
 
-
+    # The system is in selinux permissive state, So regex begins with SELINUX
     - lineinfile:
         path: /etc/selinux/config
         regexp: '^SELINUX='

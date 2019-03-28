@@ -1,0 +1,87 @@
+---
+- hosts: "{{ target }}"
+  gather_facts: True
+  vars:
+    subscription_poolId: 'TBC'
+    rh_password: 'TBC'
+    rh_username: 'TBC'
+    ocp_rpmrepo: 'rhel-7-server-ose-3.9-rpms'
+    ansible_rpmrepo: 'rhel-7-server-ansible-2.4-rpms'
+    ocpUtils: 'atomic-openshift-utils'
+
+  tasks:
+
+    - name: "Current OS version.."
+      command: uname -a
+
+
+    - name: "Check path variable.."
+      command: echo $PATH
+
+
+    - name: "Redhat subscription to a specific pool ID"
+      redhat_subscription:
+        state: present
+        username: "{{ rh_username }}"
+        password: "{{ rh_password }}"
+        force_register: true
+        pool_ids: "{{ subscription_poolId }}"
+
+
+    - name: "Pull the latest subscription data from RHSM.."
+      command: subscription-manager refresh
+      become: true
+      become_method: sudo
+      become_user: root
+
+
+    - name: "Disable all repositories"
+      command:  yum-config-manager --disable \*
+
+
+    - name: "Enable requrired OSE repositories"
+      command: subscription-manager repos --enable="rhel-7-server-rpms" --enable="rhel-7-server-extras-rpms" --enable="{{ ocp_rpmrepo }}" --enable="{{ ansible_rpmrepo }}" --enable="rhel-7-fast-datapath-rpms"
+
+
+    - name: "Install base dependencies"
+      yum: state=present name="{{ item }}"
+      with_items:
+          - wget
+          - git
+          - net-tools
+          - bind-utils
+          - yum-utils
+          - iptables-services
+          - bridge-utils
+          - bash-completion
+          - kexec-tools
+          - sos
+          - psacct
+          - python2-urllib3
+
+
+    - name: "Install all the required binaries for lvm mgmt"
+      yum:
+        name: 'lvm*'
+        state: present
+
+
+    - name: "Update all packages to latest"
+      yum:
+        name: '*'
+        state: latest
+
+
+    - name: "Applicable only for rpm based installation - Pre OCPv3.10 it is atomic-openshift-utils and post OCPv3.10 it is openshift-ansible"
+      yum: state=present name="{{ item }}"
+      with_items:
+         - atomic-openshift-utils
+      tags:
+         - rpmized
+
+    - name: "Applicable only for containerized installation"
+      yum: state=present name="{{ item }}"
+      with_items:
+         - atomic
+      tags:
+         - containerized

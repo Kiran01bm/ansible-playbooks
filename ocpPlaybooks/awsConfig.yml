@@ -1,0 +1,15 @@
+---
+- hosts: "{{ target }}"
+  gather_facts: 'no'
+
+  tasks:
+
+    - name: "Current OS version.."
+      command: uname -a
+
+
+    - name: "Copy zone specific aws conf"
+      copy:
+        src: "{{ fileName }}"
+        dest: "/etc/origin/cloudprovider/aws.conf"
+        mode: 0600

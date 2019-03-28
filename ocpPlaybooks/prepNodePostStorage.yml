@@ -1,0 +1,66 @@
+---
+- hosts: "{{ target }}"
+  gather_facts: True
+  vars:
+    docker_version: 'docker-1.13.1'
+
+  tasks:
+
+    - name: "Install the latest version of Docker"
+      yum:
+        name: docker
+        state: present
+
+
+    - name: "Docker storage set-up to use an existing volume-group"
+      copy:
+        src: "docker-storage-setup"
+        dest: "/etc/sysconfig/docker-storage-setup"
+        mode: 0644
+
+
+    - name: "Sys out the storage set-up values"
+      command: cat /etc/sysconfig/docker-storage-setup
+
+
+    - name: "Enable and start Docker service"
+      systemd:
+        name: docker
+        enabled: yes
+        masked: no
+        state: started
+        daemon_reload: yes
+
+
+    - name: "Stop docker service"
+      systemd:
+        name: docker
+        state: stopped
+
+
+    - name: "Remove any containes/images etc"
+      command: rm -rf /var/lib/docker/*
+
+
+    - name: "Restart docker service"
+      systemd:
+        name: docker
+        state: restarted
+
+
+    - name: "Verify system config"
+      command: docker info
+
+    - name: "Install the latest version of NetworkManager"
+      yum:
+        name: NetworkManager
+        state: present
+
+
+    - name: "Enable and start NetworkManager service"
+      systemd:
+        name: NetworkManager
+        enabled: yes
+        masked: no
+        state: started
+        daemon_reload: yes

@@ -1,0 +1,26 @@
+---
+- hosts: "{{ target }}"
+  gather_facts: 'True'
+  # Sample execution - ansible-playbook -v -i /etc/ansible/hosts -e "user=ec2-user" --become -e "target=all" setVMMaxMapCountForES.yml
+  tasks:
+
+    - name: "Current OS version.."
+      command: uname -a
+
+    - lineinfile:
+        path: /etc/rc.d/rc.local
+        state: present
+        insertafter: EOF
+        line: 'echo 262144 > /proc/sys/vm/max_map_count'
+
+    - file:
+        path: /etc/rc.d/rc.local
+        mode: 0755
+
+    - name: "Enable and start rc.local service"
+      systemd:
+        name: rc-local
+        enabled: yes
+        masked: no
+        state: started
+        daemon_reload: yes

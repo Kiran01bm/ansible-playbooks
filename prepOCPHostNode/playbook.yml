@@ -97,11 +97,11 @@
          - containerized
 
     - parted:
-      device: {{ block_device_name }}
-      number: 1
-      flags: [ lvm ]
-      state: present
-      part_start: 1MiB
+        device: "{{ block_device_name }}"
+        number: 1
+        flags: [ lvm ]
+        state: present
+        part_start: 1MiB
 
 
     - name: "Creating new LVM volume group"
